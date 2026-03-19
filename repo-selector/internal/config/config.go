@@ -1,5 +1,10 @@
 package config
 
+import (
+	"fmt"
+	"strings"
+)
+
 type StarsRange string
 
 const (
@@ -21,4 +26,27 @@ type Criteria struct {
 	Stars           StarsRange
 	Language        string
 	Size            SizeRange
+}
+
+func (c Criteria) Pretty() string {
+	parts := []string{}
+	parts = append(parts, "public repos")
+
+	if c.Language != "" {
+		parts = append(parts, fmt.Sprintf("language: %s", c.Language))
+	}
+
+	if c.Stars != "" {
+		parts = append(parts, fmt.Sprintf("stars: %s", c.Stars))
+	}
+
+	if c.Size != "" {
+		parts = append(parts, fmt.Sprintf("size: %s", c.Size))
+	}
+
+	if c.MinContributors {
+		parts = append(parts, "contributors: > threshold")
+	}
+
+	return strings.Join(parts, " | ")
 }

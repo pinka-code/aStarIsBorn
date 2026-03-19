@@ -19,9 +19,7 @@ func main() {
 	criteria := resolveCriteria(rng)
 	query := selector.BuildQuery(criteria)
 
-	client := github.Client{
-		Token: os.Getenv("GITHUB_TOKEN"),
-	}
+	client := github.NewClient(os.Getenv("GITHUB_TOKEN"))
 
 	items, total, err := client.SearchRepositories(query, 1)
 	if err != nil || len(items) == 0 {
@@ -56,7 +54,7 @@ func main() {
 	store.Save()
 
 	fmt.Println("Date:", date.Format("2006-01-02"))
-	fmt.Println("Criteria:", criteria)
+	fmt.Println("Criteria:", criteria.Pretty())
 	fmt.Println("Selected repo:", repo["full_name"])
 }
 
