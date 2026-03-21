@@ -2,6 +2,8 @@ package config
 
 import (
 	"fmt"
+	"math/rand"
+	"os"
 	"strings"
 )
 
@@ -49,4 +51,39 @@ func (c Criteria) Pretty() string {
 	}
 
 	return strings.Join(parts, " | ")
+}
+
+func ResolveCriteria(rng *rand.Rand) Criteria {
+	forcedLang := os.Getenv("LANGUAGE")
+	if forcedLang != "" {
+		return Criteria{
+			MinContributors: true,
+			Stars:           StarsMedium,
+			Language:        forcedLang,
+			Size:            SizeMedium,
+		}
+	}
+
+	starsOptions := []StarsRange{
+		StarsLow,
+		StarsMedium,
+		StarsHigh,
+	}
+
+	sizeOptions := []SizeRange{
+		SizeSmall,
+		SizeMedium,
+		SizeLarge,
+	}
+
+	languages := []string{
+		"go", "python", "typescript", "rust", "java", "c++",
+	}
+
+	return Criteria{
+		MinContributors: rng.Intn(2) == 0,
+		Stars:           starsOptions[rng.Intn(len(starsOptions))],
+		Language:        languages[rng.Intn(len(languages))],
+		Size:            sizeOptions[rng.Intn(len(sizeOptions))],
+	}
 }
