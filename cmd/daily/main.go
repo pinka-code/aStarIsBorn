@@ -3,7 +3,6 @@ package main
 import (
 	"a-star-is-born/internal/daily"
 	"a-star-is-born/internal/github"
-	"a-star-is-born/internal/territory"
 	"fmt"
 	"os"
 	"time"
@@ -14,37 +13,25 @@ func main() {
 
 	client := github.NewClient(os.Getenv("GITHUB_TOKEN"))
 
-	result, err := daily.SelectDailyRepository(
-		client,
-		"data/history.json",
-		date,
-	)
+	repo, err := daily.SelectDailyRepository(client, "data/history.jsonl", date)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
 
-	err = daily.BuildDailySnapshot(
-		client,
-		result.Repo,
-		"data/today.json",
-		date,
-	)
-	if err != nil {
-		fmt.Println("Snapshot error:", err)
-		return
+	fmt.Println("📅 Date:", date.Format("2006-01-02"))
+	fmt.Println("📦 Repo:", repo.FullName)
+	fmt.Println("🔗 URL:", repo.HTMLURL)
+	fmt.Println("⭐ Stars:", repo.StargazersCount)
+	fmt.Println("💻 Language:", repo.Language)
+
+	if repo.DeepWikiURL != "" {
+		fmt.Println("🧠 DeepWiki:", repo.DeepWikiURL)
 	}
 
-	fmt.Println("Date:", result.Date)
-	fmt.Println("Criteria:", result.Criteria)
-	fmt.Println("Selected repo:", result.Repo.FullName)
-
-	err = territory.GenerateTerritoryJSON(
-		"data/today.json",
-		"data/territory.json",
-	)
-	if err != nil {
-		fmt.Println("Territory generation error:", err)
-		return
+	if repo.Description != "" {
+		fmt.Println("📝 Description:", repo.Description)
+	} else {
+		fmt.Println("📝 Description: (none)")
 	}
 }

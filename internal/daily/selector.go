@@ -11,13 +11,22 @@ import (
 	"time"
 )
 
-type Result struct {
-	Date     string
-	Criteria string
-	Repo     model.Repository
+func SelectDailyRepository(client *github.Client, storePath string, date time.Time) (*model.Repository, error) {
+	repo, err := selectDailyRepo(client, date)
+	if err != nil {
+		return nil, err
+	}
+
+	enriched := enrichWithDeepWiki(*repo)
+
+	if err := storeRepository(storePath, enriched); err != nil {
+		return nil, err
+	}
+
+	return &enriched, nil
 }
 
-func SelectDailyRepository(client *github.Client, storePath string, date time.Time) (*Result, error) {
+func selectDailyRepo(client *github.Client, date time.Time) (*model.Repository, error) {
 	seed := selector.SeedFromDate(date)
 	rng := rand.New(rand.NewSource(seed))
 
@@ -26,11 +35,11 @@ func SelectDailyRepository(client *github.Client, storePath string, date time.Ti
 
 	items, total, err := client.SearchRepositories(query, 1)
 	if err != nil {
-		return nil, fmt.Errorf("search failed: %w", err)
+		return &model.Repository{}, fmt.Errorf("search failed: %w", err)
 	}
 
 	if len(items) == 0 {
-		return nil, fmt.Errorf("no repositories found")
+		return &model.Repository{}, fmt.Errorf("no repositories found")
 	}
 
 	if total > 1000 {
@@ -40,24 +49,29 @@ func SelectDailyRepository(client *github.Client, storePath string, date time.Ti
 	index := selector.PickIndex(seed, total)
 	pos := index % len(items)
 
-	repo := items[pos]
+	return &items[pos], nil
+}
 
-	store, err := storage.Load(storePath)
+func storeRepository(storePath string, repo model.Repository) error {
+	store, err := storage.LoadHistory(storePath)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	if !store.Exists(repo.ID) {
-		store.Add(date.Format("2006-01-02"), repo.ID)
-
-		if err := store.Save(); err != nil {
-			return nil, err
-		}
+	if _, exists := store.GetRepository(repo.ID); !exists {
+		return store.Append(&repo)
 	}
 
-	return &Result{
-		Date:     date.Format("2006-01-02"),
-		Criteria: criteria.Pretty(),
-		Repo:     repo,
-	}, nil
+	return nil
+}
+
+func enrichWithDeepWiki(repo model.Repository) model.Repository {
+	if repo.DeepWikiURL == "" {
+		repo.DeepWikiURL = fmt.Sprintf(
+			"https://deepwiki.com/%s/%s",
+			repo.Owner.Login,
+			repo.Name,
+		)
+	}
+	return repo
 }

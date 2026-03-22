@@ -19,4 +19,6 @@ type Repository struct {
 	CreatedAt       time.Time `json:"created_at"`
 	UpdatedAt       time.Time `json:"updated_at"`
 	PushedAt        time.Time `json:"pushed_at"`
+	DateFetch       time.Time `json:"date_fetch"`
+	DeepWikiURL     string    `json:"deepwiki_url"`
 }
