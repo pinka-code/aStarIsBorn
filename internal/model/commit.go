@@ -12,9 +12,16 @@ type Commit struct {
 		} `json:"author"`
 		Message string `json:"message"`
 	} `json:"commit"`
-	Author *struct {
-		Login string `json:"login"`
-		ID    int64  `json:"id"`
-		Type  string `json:"type"`
-	} `json:"author"`
+	Author *Contributor `json:"author"`
+}
+
+type CommitWithFiles struct {
+	Author *Contributor `json:"author"`
+	SHA    string       `json:"sha"`
+	Date   time.Time    `json:"date"`
+	Files  []File       `json:"files"`
+}
+
+type File struct {
+	Filename string `json:"filename"`
 }

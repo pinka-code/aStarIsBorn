@@ -3,6 +3,7 @@ package main
 import (
 	"a-star-is-born/internal/daily"
 	"a-star-is-born/internal/github"
+	"a-star-is-born/internal/territory"
 	"fmt"
 	"os"
 	"time"
@@ -37,4 +38,13 @@ func main() {
 	fmt.Println("Date:", result.Date)
 	fmt.Println("Criteria:", result.Criteria)
 	fmt.Println("Selected repo:", result.Repo.FullName)
+
+	err = territory.GenerateTerritoryJSON(
+		"data/today.json",
+		"data/territory.json",
+	)
+	if err != nil {
+		fmt.Println("Territory generation error:", err)
+		return
+	}
 }
