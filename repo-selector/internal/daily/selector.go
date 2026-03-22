@@ -48,14 +48,12 @@ func SelectDailyRepository(client *github.Client, storePath string, date time.Ti
 		return nil, err
 	}
 
-	if store.Exists(repo.ID) {
-		return nil, fmt.Errorf("repo already selected (rare case)")
-	}
+	if !store.Exists(repo.ID) {
+		store.Add(date.Format("2006-01-02"), repo.ID)
 
-	store.Add(date.Format("2006-01-02"), repo.ID)
-
-	if err := store.Save(); err != nil {
-		return nil, err
+		if err := store.Save(); err != nil {
+			return nil, err
+		}
 	}
 
 	return &Result{

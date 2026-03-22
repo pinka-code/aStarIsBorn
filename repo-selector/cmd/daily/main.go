@@ -23,6 +23,17 @@ func main() {
 		return
 	}
 
+	err = daily.BuildDailySnapshot(
+		client,
+		result.Repo,
+		"data/today.json",
+		date,
+	)
+	if err != nil {
+		fmt.Println("Snapshot error:", err)
+		return
+	}
+
 	fmt.Println("Date:", result.Date)
 	fmt.Println("Criteria:", result.Criteria)
 	fmt.Println("Selected repo:", result.Repo.FullName)
