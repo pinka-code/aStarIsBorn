@@ -1,0 +1,20 @@
+name: Daily GitHub Random Repo
+
+on:
+  schedule:
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+steps:
+  - name: Run script
+    run: |
+      git clone https://github.com/${{ github.repository }} repo
+      cd repo
+      ./run.sh
