@@ -82,3 +82,11 @@ No manual intervention is needed to keep the history up-to-date.
 - `data/history.jsonl` – daily history of repositories found
 - `error.log `– log file for errors
 - `.github/workflows/cron.yml` – GitHub Actions workflow
+
+## Roadmap / Ideas for improvements
+
+- [] 📧 Send daily email with the repository information of the day
+- [] 🔄 Avoid duplicates: skip repositories already in history.jsonl
+- [] 🤖 Add AI to make a summary of the repo and rebuild a mini README.md
+- [] 🌐 Use this as base to build a Contributor Territory Map
+- [] ...
