@@ -9,11 +9,10 @@ jobs:
   run:
     runs-on: ubuntu-latest
 
-  env:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   steps:
     - name: Run script
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git clone https://github.com/${{ github.repository }} repo
         cd repo
