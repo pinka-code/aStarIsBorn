@@ -9,6 +9,8 @@ jobs:
   cronrun:
     runs-on: ubuntu-latest
     steps:
+      - name: Make script executable
+        run: chmod +x ./run.sh
       - name: Run script
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
