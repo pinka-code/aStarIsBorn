@@ -6,14 +6,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  run:
+  cronrun:
     runs-on: ubuntu-latest
-
-  steps:
-    - name: Run script
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        git clone https://github.com/${{ github.repository }} repo
-        cd repo
-        ./run.sh
+    steps:
+      - name: Run script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git clone https://github.com/${{ github.repository }} repo
+          cd repo
+          ./run.sh
