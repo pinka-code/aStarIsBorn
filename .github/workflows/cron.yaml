@@ -9,6 +9,8 @@ jobs:
   cronrun:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Make script executable
         run: chmod +x ./run.sh
       - name: Run script
