@@ -85,7 +85,7 @@ No manual intervention is needed to keep the history up-to-date.
 
 ## Roadmap / Ideas for improvements
 
-- [ ] 📧 Send daily email with the repository information of the day
+- [x] 📧 Send daily email with the repository information of the day
 - [ ] 🔄 Avoid duplicates: skip repositories already in history.jsonl
 - [ ] 🤖 Add AI to make a summary of the repo and rebuild a mini README.md
 - [ ] 🌐 Use this as base to build a Contributor Territory Map
