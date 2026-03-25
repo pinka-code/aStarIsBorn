@@ -4,7 +4,9 @@ import (
 	"a-star-is-born/internal/daily"
 	"a-star-is-born/internal/github"
 	"fmt"
+	"net/smtp"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -19,19 +21,53 @@ func main() {
 		return
 	}
 
-	fmt.Println("📅 Date:", date.Format("2006-01-02"))
-	fmt.Println("📦 Repo:", repo.FullName)
-	fmt.Println("🔗 URL:", repo.HTMLURL)
-	fmt.Println("⭐ Stars:", repo.StargazersCount)
-	fmt.Println("💻 Language:", repo.Language)
+	description := repo.Description
+	if description == "" {
+		description = "(none)"
+	}
 
+	deepWiki := ""
 	if repo.DeepWikiURL != "" {
-		fmt.Println("🧠 DeepWiki:", repo.DeepWikiURL)
+		deepWiki = fmt.Sprintf("🧠 DeepWiki: %s\n", repo.DeepWikiURL)
 	}
 
-	if repo.Description != "" {
-		fmt.Println("📝 Description:", repo.Description)
-	} else {
-		fmt.Println("📝 Description: (none)")
+	msg := fmt.Sprintf(
+		"Subject: A Star is born Newsletter\n\n"+
+			"📅 Date: %s\n"+
+			"📦 Repo: %s\n"+
+			"🔗 URL: %s\n"+
+			"⭐ Stars: %d\n"+
+			"💻 Language: %s\n"+
+			"%s"+
+			"📝 Description: %s\n",
+		date.Format("2006-01-02"),
+		repo.FullName,
+		repo.HTMLURL,
+		repo.StargazersCount,
+		repo.Language,
+		deepWiki,
+		description,
+	)
+
+	// Sending email
+	from := os.Getenv("SMTP_USER")
+	pass := os.Getenv("SMTP_PASS")
+	subscribers := os.Getenv("SUBSCRIBERS")
+	toList := strings.Split(subscribers, ",")
+
+	for _, to := range toList {
+		err := smtp.SendMail(
+			"smtp.gmail.com:587",
+			smtp.PlainAuth("", from, pass, "smtp.gmail.com"),
+			from,
+			[]string{to},
+			[]byte(msg),
+		)
+
+		if err != nil {
+			fmt.Println("❌ Error", err)
+			continue
+		}
 	}
+	fmt.Println("✅ Email sent")
 }

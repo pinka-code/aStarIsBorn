@@ -12,6 +12,9 @@ jobs:
       - name: Run script
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SUBSCRIBERS: ${{ secrets.SUBSCRIBERS }}
         run: |
           git clone https://github.com/${{ github.repository }} repo
           cd repo
